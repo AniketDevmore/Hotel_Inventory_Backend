@@ -13,5 +13,5 @@ app.listen(port, (err) => {
 });
 
 db.connect()
-    .then(() => console.log("PostgreSQL connected"))
+    .then(() => console.log("PostgreSQL connected..."))
     .catch(err => console.error("Connection error", err));

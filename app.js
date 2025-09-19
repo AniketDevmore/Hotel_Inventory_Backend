@@ -3,12 +3,13 @@ const express = require('express');
 const cors = require("cors");
 const app = express();
 
+// routes
+const authRoute = require('./routes/auth');
+
 app.use(express.json());
 // cross origin package use
 app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send('Hello World from Express!');
-});
+app.use('/auth', authRoute)
 
 module.exports = app;
