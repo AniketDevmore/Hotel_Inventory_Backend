@@ -1,4 +1,4 @@
-const { categoryList, unitList } = require("../db/db");
+const { categoryList, unitList, addNewInventory } = require("../db/db");
 
 const getCategoryList = (req, res, next) => {
     categoryList()
@@ -39,7 +39,38 @@ const getInventoryUnitList = (req, res, next) => {
         });
 }
 
+const addInventory = (req, res, next) => {
+    // console.log('req=>', req.body)
+    addNewInventory(req.body).then((data) => {
+        res.json({
+            status: true,
+            message: "Inventory added successfully"
+        });
+    })
+        .catch((err) => {
+            let message = err.message;
+
+            // Check for unique constraint error (duplicate email)
+            if (err.code === "23505") {
+                // 23505 = unique_violation in PostgreSQL
+
+                if (err.constraint === "hotel_id") {
+                    message = "User id must be required as hotel_id";
+                }
+                 if (err.constraint === "purchase_date") {
+                    message = "User id must be required as hotel_id";
+                }
+            }
+
+            res.json({
+                status: false,
+                message,
+            });
+        });
+}
+
 module.exports = {
     getCategoryList,
-    getInventoryUnitList
+    getInventoryUnitList,
+    addInventory
 };
