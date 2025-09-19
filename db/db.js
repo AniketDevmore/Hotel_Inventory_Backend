@@ -1,7 +1,7 @@
 const db = require('./postgrsql');
 
 const createNewUser = (userData) => {
-  console.log("userdata =>", userData);
+  // console.log("userdata =>", userData);
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -43,7 +43,43 @@ const getUserByEmail = (email) => {
   })
 };
 
+const categoryList = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await db.query("SELECT * FROM product_category");
+
+      // console.log('result=>', result);
+      if (result.rows) {
+        resolve(result.rows)
+      } else {
+        reject(new Error('Category list not found!'))
+      }
+    } catch (err) {
+      reject(err);
+    }
+  })
+};
+
+const unitList = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await db.query("SELECT * FROM inventory_unit");
+
+      // console.log('result=>', result);
+      if (result.rows) {
+        resolve(result.rows)
+      } else {
+        reject(new Error('Unit list not found!'))
+      }
+    } catch (err) {
+      reject(err);
+    }
+  })
+}
+
 module.exports = {
   createNewUser,
-  getUserByEmail
+  getUserByEmail,
+  categoryList,
+  unitList
 }
