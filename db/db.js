@@ -100,10 +100,46 @@ const addNewInventory = (userData) => {
   });
 };
 
+const updateInventoryData = (userData) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let quantity = await db.query("SELECT quantity FROM inventory WHERE id=$1", [userData.id]);
+
+      let usageDetails = await db.query("SELECT usage_details FROM inventory WHERE id=$1", [userData.id]);
+
+      let newQuantity = quantity.rows[0].quantity
+      if(quantity.rows[0].quantity > 0 && quantity.rows[0].quantity >= userData.quantityUsed){
+          newQuantity =  quantity.rows[0].quantity - userData.quantityUsed;
+      }else{
+        reject(new Error("Insufficient stock!"));
+      }
+
+      let newUsageDetails = !usageDetails.rows[0].usage_details ? JSON.stringify(userData) : usageDetails.rows[0].usage_details + " " + JSON.stringify(userData);
+
+      let result = await db.query("UPDATE inventory SET quantity=$1, usage_details=$2 WHERE id=$3 RETURNING *", [newQuantity, newUsageDetails, userData.id])
+
+      // console.log('result=>', newUsageDetails)
+
+      if (result.rows[0]) {
+        // console.log("result =>", result.rows);
+        resolve(result.rows[0]); // return inserted user
+      } else {
+        reject(new Error("Unable to update inventory"));
+      }
+    } catch (err) {
+      // console.error("err-->>", err);
+      reject(err); // reject with error
+    }
+  });
+}
+
 module.exports = {
   createNewUser,
   getUserByEmail,
   categoryList,
   unitList,
-  addNewInventory
+  addNewInventory,
+  updateInventoryData
 }
+
+// newUsage==> {"id":"1758290586092","itemName":"Organic Milk","quantityUsed":1,"unit":"liters","usedBy":"Aniket","purpose":"Lassi","notes":"Test","usageDate":"2025-09-19","timestamp":"2025-09-19T14:03:06.092Z"}
