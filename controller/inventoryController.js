@@ -108,11 +108,58 @@ const updateInventory = (req, res, next) => {
                 message,
             });
         });
+};
+
+const editInventory = (req, res, next) => {
+    // console.log('req=>', req.body)
+    addNewInventory(req.body).then((data) => {
+        res.json({
+            status: true,
+            message: "Inventory added successfully"
+        });
+    })
+        .catch((err) => {
+            let message = err.message;
+
+            console.log('err-->>', err.constraint)
+            // Check for unique constraint error (duplicate email)
+            if (err.code === "23502") {
+                // 23505 = unique_violation in PostgreSQL
+
+                if (err.constraint === "hotel_id") {
+                    message = "User id must be required as hotel_id";
+                }
+                if (err.constraint === "purchase_date") {
+                    message = "Purchase date must be required!";
+                }
+                if (err.constraint === "name") {
+                    message = "Name must be required!";
+                }
+                if (err.constraint === "category") {
+                    message = "Category must be required!";
+                }
+                if (err.constraint === "quantity") {
+                    message = "Quantity must be required!";
+                }
+                if (err.constraint === "unit") {
+                    message = "Unit must be required!";
+                }
+                if (err.constraint === "cost") {
+                    message = "Cost must be required!";
+                }
+            }
+
+            res.json({
+                status: false,
+                message,
+            });
+        });
 }
 
 module.exports = {
     getCategoryList,
     getInventoryUnitList,
     addInventory,
-    updateInventory
+    updateInventory,
+    editInventory
 };

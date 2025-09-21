@@ -131,7 +131,26 @@ const updateInventoryData = (userData) => {
       reject(err); // reject with error
     }
   });
-}
+};
+
+const editInventory = (userData) => {
+  // console.log("userdata =>", userData);
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await db.query("UPDATE inventory SET name=$1, category=$2, quantity=$3, unit=$4, purchase_date=$5, expiry_date=$6, purchase_location=$7, alert_level=$8, stock_percentage=$9, cost=$10, notes=$11 WHERE id=$12 RETURNING *", [userData.name, userData.category, userData.quantity, userData.unit, userData.purchaseDate, userData.expiryDate, userData.purchaseLocation, userData.alertLevel, userData.stockPercentage, userData.cost, userData.notes, userData.id ])
+
+      if (result.rows[0]) {
+        // console.log("result =>", result.rows);
+        resolve(result.rows[0]); // return inserted user
+      } else {
+        reject(new Error("Unable to update inventory"));
+      }
+    } catch (err) {
+      // console.error("err-->>", err);
+      reject(err); // reject with error
+    }
+  });
+};
 
 module.exports = {
   createNewUser,
@@ -139,7 +158,8 @@ module.exports = {
   categoryList,
   unitList,
   addNewInventory,
-  updateInventoryData
+  updateInventoryData,
+  editInventory
 }
 
-// newUsage==> {"id":"1758290586092","itemName":"Organic Milk","quantityUsed":1,"unit":"liters","usedBy":"Aniket","purpose":"Lassi","notes":"Test","usageDate":"2025-09-19","timestamp":"2025-09-19T14:03:06.092Z"}
+// {"id":"1","name":"Fresh Tomatoes","category":"Vegetables","quantity":15,"unit":"kg","purchaseDate":"2024-01-15","expiryDate":"2024-01-25","purchaseLocation":"Local Farm Market","alertLevel":"warning","stockPercentage":18.75,"cost":25.5,"notes":"Organic tomatoes from local farm"}
