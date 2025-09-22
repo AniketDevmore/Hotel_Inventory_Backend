@@ -1,4 +1,4 @@
-const { categoryList, unitList, addNewInventory, updateInventoryData, removeInventory } = require("../db/db");
+const { categoryList, unitList, addNewInventory, updateInventoryData, removeInventory, getInventory } = require("../db/db");
 
 const getCategoryList = (req, res, next) => {
     categoryList()
@@ -173,11 +173,29 @@ const deleteInventory = (req, res, next) => {
     })
 }
 
+const getInventoryList = (req, res, next) => {
+    getInventory(req.body).then(data => {
+        res.json({
+            status: true,
+            data: data,
+            message: "Inventory fetched successfully"
+        });
+    }).catch(err => {
+        let message = err.message;
+
+        res.json({
+            status: false,
+            message,
+        });
+    })
+}
+
 module.exports = {
     getCategoryList,
     getInventoryUnitList,
     addInventory,
     updateInventory,
     editInventory,
-    deleteInventory
+    deleteInventory,
+    getInventoryList
 };

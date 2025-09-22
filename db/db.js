@@ -169,6 +169,22 @@ const removeInventory = (userData) => {
   })
 }
 
+const getInventory = (userData) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await db.query('SELECT * FROM inventory WHERE hotel_id=$1', [userData.hotel_id]);
+      console.log('result=>', result.rows);
+      if (result.rows) {
+        resolve(result.rows);
+      } else {
+        reject(new Error('Category list not found!'));
+      }
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 module.exports = {
   createNewUser,
   getUserByEmail,
@@ -177,7 +193,8 @@ module.exports = {
   addNewInventory,
   updateInventoryData,
   editInventory,
-  removeInventory
+  removeInventory,
+  getInventory
 }
 
 // {"id":"1","name":"Fresh Tomatoes","category":"Vegetables","quantity":15,"unit":"kg","purchaseDate":"2024-01-15","expiryDate":"2024-01-25","purchaseLocation":"Local Farm Market","alertLevel":"warning","stockPercentage":18.75,"cost":25.5,"notes":"Organic tomatoes from local farm"}
