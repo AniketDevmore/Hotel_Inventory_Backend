@@ -108,9 +108,9 @@ const updateInventoryData = (userData) => {
       let usageDetails = await db.query("SELECT usage_details FROM inventory WHERE id=$1", [userData.id]);
 
       let newQuantity = quantity.rows[0].quantity
-      if(quantity.rows[0].quantity > 0 && quantity.rows[0].quantity >= userData.quantityUsed){
-          newQuantity =  quantity.rows[0].quantity - userData.quantityUsed;
-      }else{
+      if (quantity.rows[0].quantity > 0 && quantity.rows[0].quantity >= userData.quantityUsed) {
+        newQuantity = quantity.rows[0].quantity - userData.quantityUsed;
+      } else {
         reject(new Error("Insufficient stock!"));
       }
 
@@ -137,11 +137,11 @@ const editInventory = (userData) => {
   // console.log("userdata =>", userData);
   return new Promise(async (resolve, reject) => {
     try {
-      let result = await db.query("UPDATE inventory SET name=$1, category=$2, quantity=$3, unit=$4, purchase_date=$5, expiry_date=$6, purchase_location=$7, alert_level=$8, stock_percentage=$9, cost=$10, notes=$11 WHERE id=$12 RETURNING *", [userData.name, userData.category, userData.quantity, userData.unit, userData.purchaseDate, userData.expiryDate, userData.purchaseLocation, userData.alertLevel, userData.stockPercentage, userData.cost, userData.notes, userData.id ])
+      let result = await db.query("UPDATE inventory SET name=$1, category=$2, quantity=$3, unit=$4, purchase_date=$5, expiry_date=$6, purchase_location=$7, alert_level=$8, stock_percentage=$9, cost=$10, notes=$11 WHERE id=$12 RETURNING *", [userData.name, userData.category, userData.quantity, userData.unit, userData.purchaseDate, userData.expiryDate, userData.purchaseLocation, userData.alertLevel, userData.stockPercentage, userData.cost, userData.notes, userData.id])
 
       if (result.rows[0]) {
         // console.log("result =>", result.rows);
-        resolve(result.rows[0]); // return inserted user
+        resolve(result.rows[0]);
       } else {
         reject(new Error("Unable to update inventory"));
       }
@@ -152,6 +152,23 @@ const editInventory = (userData) => {
   });
 };
 
+const removeInventory = (userData) => {
+  console.log('userData', userData)
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await db.query("DELETE FROM inventory WHERE id=$1 AND hotel_id=$2 RETURNING *", [userData.id, userData.hotel_id]);
+      // console.log('result=>', result)
+      if (result.rows[0]) {
+        resolve(result.rows[0]);
+      } else {
+        reject(new Error("Unable to delete inventory"));
+      }
+    } catch (err) {
+      reject(err);
+    }
+  })
+}
+
 module.exports = {
   createNewUser,
   getUserByEmail,
@@ -159,7 +176,8 @@ module.exports = {
   unitList,
   addNewInventory,
   updateInventoryData,
-  editInventory
+  editInventory,
+  removeInventory
 }
 
 // {"id":"1","name":"Fresh Tomatoes","category":"Vegetables","quantity":15,"unit":"kg","purchaseDate":"2024-01-15","expiryDate":"2024-01-25","purchaseLocation":"Local Farm Market","alertLevel":"warning","stockPercentage":18.75,"cost":25.5,"notes":"Organic tomatoes from local farm"}
