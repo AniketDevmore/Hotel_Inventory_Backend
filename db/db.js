@@ -12,13 +12,12 @@ const createNewUser = (userData) => {
       );
 
       if (result.rows[0]) {
-        console.log("result =>", result.rows);
+        // console.log("result =>", result.rows);
         resolve(result.rows[0]); // return inserted user
       } else {
         reject(new Error("User not created"));
       }
     } catch (err) {
-      console.error("err-->>", err);
       reject(err); // reject with error
     }
   });
@@ -42,6 +41,46 @@ const getUserByEmail = (email) => {
     }
   })
 };
+
+const getUserById = (userData) => {
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await db.query("SELECT * FROM users WHERE id=$1 ", [userData.id])
+      if (result.rows[0]) {
+        if (result.rows[0].email === userData.email) {
+          resolve(result.rows[0]);
+        } else {
+          reject(new Error("Please enter valid email!"))
+        }
+      } else {
+        reject(new Error("User not found!"))
+      }
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+const updatePassword = (userData) => {
+  // console.log("userdata =>", userData);
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await db.query("UPDATE users SET password=$1 WHERE id=$2 RETURNING *", [userData.password, userData.id])
+      if (result.rows[0]) {
+        if (result.rows[0]) {
+          resolve(result.rows[0]);
+        } else {
+          reject(new Error("Please enter valid email!"))
+        }
+      } else {
+        reject(new Error("User not found!"))
+      }
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
 
 const categoryList = () => {
   return new Promise(async (resolve, reject) => {
@@ -153,7 +192,7 @@ const editInventory = (userData) => {
 };
 
 const removeInventory = (userData) => {
-  console.log('userData', userData)
+  // console.log('userData', userData)
   return new Promise(async (resolve, reject) => {
     try {
       let result = await db.query("DELETE FROM inventory WHERE id=$1 AND hotel_id=$2 RETURNING *", [userData.id, userData.hotel_id]);
@@ -188,13 +227,15 @@ const getInventory = (userData) => {
 module.exports = {
   createNewUser,
   getUserByEmail,
+  getUserById,
   categoryList,
   unitList,
   addNewInventory,
   updateInventoryData,
   editInventory,
   removeInventory,
-  getInventory
+  getInventory,
+  updatePassword
 }
 
 // {"id":"1","name":"Fresh Tomatoes","category":"Vegetables","quantity":15,"unit":"kg","purchaseDate":"2024-01-15","expiryDate":"2024-01-25","purchaseLocation":"Local Farm Market","alertLevel":"warning","stockPercentage":18.75,"cost":25.5,"notes":"Organic tomatoes from local farm"}

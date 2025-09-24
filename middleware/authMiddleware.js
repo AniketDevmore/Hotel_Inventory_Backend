@@ -1,11 +1,17 @@
 const bcrypt = require('bcrypt');
-const { getUserByEmail } = require('../db/db');
+const jwt = require('jsonwebtoken');
+const { getUserByEmail, getUserById } = require('../db/db');
 
 const encryptPassword = (req, res, next) => {
     const saltRound = 10;
+
+    if (req.body.password !== req.body.confirm) {
+        return res.json({ status: false, message: "Passwords do not match!" });
+    }
+
     bcrypt.hash(req.body.password, saltRound, (err, hash) => {
         req.body.password = hash;
-        // req.body.confirm = hash;
+        req.body.confirm = hash;
         next();
     });
 }
@@ -15,7 +21,7 @@ const checkPassword = (req, res, next) => {
     getUserByEmail(req.body.email).then(user => {
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if (err) {
-                console.log('err=>',err)
+                console.log('err=>', err)
                 return res.json({
                     status: false,
                     message: "Something went wrong while checking password"
@@ -39,7 +45,37 @@ const checkPassword = (req, res, next) => {
     })
 }
 
+const varifyUser = (req, res, next) => {
+    getUserById(req.body).then(data => {
+        req.user = data;
+        next();
+    }).catch(err => {
+        return res.json({
+            status: false,
+            message: err.message || "User not found"
+        });
+    })
+}
+
+const verifyResetToken = (req, res, next) => {
+    try {
+        const { token } = req.params;
+        const decoded = jwt.verify(token, process.env.JWTKEY);
+        if (decoded) {
+            req.body.id = decoded.id;
+            next();
+        }
+    } catch (err) {
+        return res.json({
+            status: false,
+            message: err.message || "Something went wrong!"
+        })
+    }
+}
+
 module.exports = {
     encryptPassword,
-    checkPassword
+    checkPassword,
+    varifyUser,
+    verifyResetToken
 }

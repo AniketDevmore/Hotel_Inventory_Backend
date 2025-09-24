@@ -121,7 +121,6 @@ const editInventory = (req, res, next) => {
         .catch((err) => {
             let message = err.message;
 
-            console.log('err-->>', err.constraint)
             // Check for unique constraint error (duplicate email)
             if (err.code === "23502") {
                 // 23505 = unique_violation in PostgreSQL
