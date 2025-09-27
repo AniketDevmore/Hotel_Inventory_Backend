@@ -46,7 +46,7 @@ const getUserById = (userData) => {
 
   return new Promise(async (resolve, reject) => {
     try {
-      let result = await db.query("SELECT * FROM users WHERE id=$1 ", [userData.id])
+      let result = await db.query("SELECT * FROM users WHERE email=$1 ", [userData.email])
       if (result.rows[0]) {
         if (result.rows[0].email === userData.email) {
           resolve(result.rows[0]);

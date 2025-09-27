@@ -6,6 +6,6 @@ const { checkPassword, encryptPassword, varifyUser, verifyResetToken } = require
 router.post('/signin', checkPassword, loginFunction);
 router.post('/signup', encryptPassword, signupFunction);
 router.post('/forgot_password', varifyUser, sendResetMail);
-router.post("/reset-password/:token", verifyResetToken, encryptPassword, resetPassword);
+router.post("/reset_password/:token", verifyResetToken, encryptPassword, resetPassword);
 
 module.exports = router;
