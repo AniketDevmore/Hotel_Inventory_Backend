@@ -5,8 +5,11 @@ const nodemailer = require("nodemailer");
 const signupFunction = (req, res, next) => {
     createNewUser(req.body)
         .then((data) => {
+            const token = jwt.sign({ email: req.body.email }, process.env.JWTKEY);
             res.json({
                 status: true,
+                token: token,
+                data: data,
                 message: "User Created Successfully!"
             });
         })
