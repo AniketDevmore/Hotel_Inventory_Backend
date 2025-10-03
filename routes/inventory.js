@@ -8,6 +8,6 @@ router.post('/add_inventory', addInventory);
 router.post('/inventory_usage', updateInventory);
 router.post('/inventory_update', editInventory);
 router.delete('/delete_inventory', deleteInventory);
-router.get('/get_inventory', getInventoryList);
+router.post('/get_inventory', getInventoryList);
 
 module.exports = router
