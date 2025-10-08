@@ -172,7 +172,7 @@ const updateInventoryData = (userData) => {
   });
 };
 
-const editInventory = (userData) => {
+const editInventoryData = (userData) => {
   // console.log("userdata =>", userData);
   return new Promise(async (resolve, reject) => {
     try {
@@ -232,7 +232,7 @@ module.exports = {
   unitList,
   addNewInventory,
   updateInventoryData,
-  editInventory,
+  editInventoryData,
   removeInventory,
   getInventory,
   updatePassword

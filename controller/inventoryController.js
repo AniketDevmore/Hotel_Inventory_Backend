@@ -1,4 +1,4 @@
-const { categoryList, unitList, addNewInventory, updateInventoryData, removeInventory, getInventory } = require("../db/db");
+const { categoryList, unitList, addNewInventory, updateInventoryData, removeInventory, getInventory, editInventoryData } = require("../db/db");
 
 const getCategoryList = (req, res, next) => {
     categoryList()
@@ -112,10 +112,10 @@ const updateInventory = (req, res, next) => {
 
 const editInventory = (req, res, next) => {
     // console.log('req=>', req.body)
-    addNewInventory(req.body).then((data) => {
+    editInventoryData(req.body).then((data) => {
         res.json({
             status: true,
-            message: "Inventory added successfully"
+            message: "Inventory updated successfully"
         });
     })
         .catch((err) => {
