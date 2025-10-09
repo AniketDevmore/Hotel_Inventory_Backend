@@ -212,7 +212,7 @@ const getInventory = (userData) => {
   return new Promise(async (resolve, reject) => {
     try {
       let result = await db.query('SELECT * FROM inventory WHERE hotel_id=$1', [userData.hotel_id]);
-      console.log('result=>', result.rows);
+      // console.log('result=>', result.rows);
       if (result.rows) {
         resolve(result.rows);
       } else {

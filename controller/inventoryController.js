@@ -88,7 +88,7 @@ const updateInventory = (req, res, next) => {
     updateInventoryData(req.body).then((data) => {
         res.json({
             status: true,
-            message: "Inventory added successfully"
+            message: "Inventory updated successfully"
         });
     })
         .catch((err) => {
